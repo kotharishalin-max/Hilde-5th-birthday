@@ -313,6 +313,30 @@ section h2 {
   margin-bottom: 8px;
 }
 
+.success-message .guest-summary {
+  font-size: 1rem;
+  color: var(--gray-light);
+  margin-top: 12px;
+}
+
+.edit-btn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 500;
+  background: transparent;
+  border: 2px solid var(--star-gold);
+  border-radius: 10px;
+  color: var(--star-gold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
 /* Guestbook Section */
 .guestbook {
   padding: 20px 0;
