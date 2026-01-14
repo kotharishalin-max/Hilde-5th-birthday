@@ -3,34 +3,37 @@ import { ref, push, update, get, query, orderByChild, equalTo } from 'firebase/d
 import { database } from '../firebase'
 
 const STORAGE_KEY = 'hilde-bday-rsvp-email'
-const OLD_STORAGE_KEY = 'hilde-bday-rsvp-id' // Legacy key to clean up
+const OLD_STORAGE_KEY = 'hilde-bday-rsvp-id'
 
 function RsvpForm() {
+  const [mode, setMode] = useState('lookup') // 'lookup', 'form', 'submitted'
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [attending, setAttending] = useState(null)
   const [adultCount, setAdultCount] = useState(1)
   const [kidCount, setKidCount] = useState(0)
-  const [submitted, setSubmitted] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
   const [existingRsvpId, setExistingRsvpId] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [lookingUp, setLookingUp] = useState(false)
 
   useEffect(() => {
-    const loadExistingRsvp = async () => {
-      // Clean up old localStorage key
+    const init = async () => {
       localStorage.removeItem(OLD_STORAGE_KEY)
 
       const savedEmail = localStorage.getItem(STORAGE_KEY)
       if (savedEmail) {
         setEmail(savedEmail)
-        await lookupByEmail(savedEmail)
+        const found = await lookupByEmail(savedEmail)
+        if (found) {
+          setMode('submitted')
+        } else {
+          setMode('lookup')
+        }
       }
       setLoading(false)
     }
-    loadExistingRsvp()
+    init()
   }, [])
 
   const lookupByEmail = async (emailToLookup) => {
@@ -49,22 +52,37 @@ function RsvpForm() {
         setAdultCount(rsvp.adultCount || rsvp.guestCount || 1)
         setKidCount(rsvp.kidCount || 0)
         setExistingRsvpId(id)
-        setSubmitted(true)
         return rsvp
       }
     } catch (err) {
-      // Index not configured - silently fail, user will create new entry
-      console.log('Email lookup unavailable (index not configured)')
+      console.log('Email lookup error:', err.message)
     }
     return null
   }
 
-  const handleEmailBlur = async () => {
-    if (email.trim() && !existingRsvpId) {
-      setLookingUp(true)
-      await lookupByEmail(email)
-      setLookingUp(false)
+  const handleLookup = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    if (!email.trim()) {
+      setError('Please enter your email')
+      return
     }
+
+    setLookingUp(true)
+    const found = await lookupByEmail(email)
+    setLookingUp(false)
+
+    if (found) {
+      localStorage.setItem(STORAGE_KEY, email.toLowerCase().trim())
+      setMode('submitted')
+    } else {
+      setMode('form')
+    }
+  }
+
+  const handleNewRsvp = () => {
+    setMode('form')
   }
 
   const handleSubmit = async (e) => {
@@ -94,35 +112,15 @@ function RsvpForm() {
     }
 
     try {
-      let rsvpId = existingRsvpId
-
-      // Try to find existing RSVP by email (may fail if index not set up)
-      if (!rsvpId) {
-        try {
-          const rsvpsRef = ref(database, 'rsvps')
-          const emailQuery = query(rsvpsRef, orderByChild('email'), equalTo(email.toLowerCase().trim()))
-          const snapshot = await get(emailQuery)
-
-          if (snapshot.exists()) {
-            rsvpId = Object.keys(snapshot.val())[0]
-          }
-        } catch (queryErr) {
-          // Index not set up - that's ok, we'll create a new entry
-          console.log('Email lookup skipped (index not configured)')
-        }
-      }
-
-      if (rsvpId) {
-        await update(ref(database, `rsvps/${rsvpId}`), rsvpData)
-        setExistingRsvpId(rsvpId)
+      if (existingRsvpId) {
+        await update(ref(database, `rsvps/${existingRsvpId}`), rsvpData)
       } else {
         const newRef = await push(ref(database, 'rsvps'), rsvpData)
         setExistingRsvpId(newRef.key)
       }
 
       localStorage.setItem(STORAGE_KEY, email.toLowerCase().trim())
-      setSubmitted(true)
-      setIsEditing(false)
+      setMode('submitted')
     } catch (err) {
       setError('Oops! Something went wrong. Please try again.')
       console.error(err)
@@ -130,8 +128,7 @@ function RsvpForm() {
   }
 
   const handleEdit = () => {
-    setIsEditing(true)
-    setSubmitted(false)
+    setMode('form')
   }
 
   const handleReset = () => {
@@ -142,8 +139,7 @@ function RsvpForm() {
     setAdultCount(1)
     setKidCount(0)
     setExistingRsvpId(null)
-    setSubmitted(false)
-    setIsEditing(false)
+    setMode('lookup')
   }
 
   if (loading) {
@@ -155,7 +151,46 @@ function RsvpForm() {
     )
   }
 
-  if (submitted && !isEditing) {
+  // LOOKUP MODE - First screen for returning visitors
+  if (mode === 'lookup') {
+    return (
+      <section className="rsvp">
+        <h2>Mission Log</h2>
+        <p className="rsvp-subtitle">Already RSVP'd? Find your response to update it.</p>
+
+        <form onSubmit={handleLookup} className="lookup-form">
+          <div className="form-group">
+            <label htmlFor="lookup-email">Your Email</label>
+            <input
+              type="email"
+              id="lookup-email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="astronaut@email.com"
+              autoFocus
+            />
+          </div>
+
+          {error && <p className="error">{error}</p>}
+
+          <button type="submit" className="submit-btn" disabled={lookingUp}>
+            {lookingUp ? 'Searching...' : 'Find My RSVP 🔍'}
+          </button>
+        </form>
+
+        <div className="divider">
+          <span>or</span>
+        </div>
+
+        <button onClick={handleNewRsvp} className="secondary-btn">
+          New here? Submit your RSVP
+        </button>
+      </section>
+    )
+  }
+
+  // SUBMITTED MODE - Show confirmation with edit option
+  if (mode === 'submitted') {
     return (
       <section className="rsvp">
         <h2>Mission Log</h2>
@@ -180,6 +215,7 @@ function RsvpForm() {
     )
   }
 
+  // FORM MODE - New or editing RSVP
   return (
     <section className="rsvp">
       <h2>Mission Log</h2>
@@ -195,10 +231,8 @@ function RsvpForm() {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            onBlur={handleEmailBlur}
             placeholder="astronaut@email.com"
           />
-          {lookingUp && <p className="lookup-status">Checking for existing RSVP...</p>}
         </div>
 
         <div className="form-group">
@@ -267,6 +301,12 @@ function RsvpForm() {
         <button type="submit" className="submit-btn">
           {existingRsvpId ? 'Update RSVP 🌟' : 'Submit RSVP 🌟'}
         </button>
+
+        {!existingRsvpId && (
+          <button type="button" onClick={handleReset} className="reset-link">
+            ← Back to lookup
+          </button>
+        )}
       </form>
     </section>
   )

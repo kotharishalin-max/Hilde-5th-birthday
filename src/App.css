@@ -363,6 +363,47 @@ section h2 {
   text-decoration: underline;
 }
 
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.divider span {
+  padding: 0 16px;
+  color: var(--gray-light);
+  font-size: 0.9rem;
+}
+
+/* Secondary Button */
+.secondary-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 500;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+  border-color: var(--star-gold);
+  color: var(--star-gold);
+}
+
 /* Guestbook Section */
 .guestbook {
   padding: 20px 0;
