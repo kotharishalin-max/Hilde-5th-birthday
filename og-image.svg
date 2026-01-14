@@ -79,7 +79,7 @@
 
   <!-- Age badge -->
   <g transform="translate(600, 530)">
-    <rect x="-120" y="-40" width="240" height="80" rx="40" fill="rgba(255, 215, 0, 0.15)" stroke="#ffd700" stroke-width="2"/>
+    <rect x="-160" y="-40" width="320" height="80" rx="40" fill="rgba(255, 215, 0, 0.15)" stroke="#ffd700" stroke-width="2"/>
     <text x="0" y="15" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="36" fill="#ffd700">5 YEARS OLD!</text>
   </g>
 </svg>
