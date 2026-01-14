@@ -127,6 +127,7 @@ function AdminPage({ onBack }) {
           <thead>
             <tr>
               <th>Name</th>
+              <th>Email</th>
               <th>Response</th>
               <th>Adults</th>
               <th>Kids</th>
@@ -137,6 +138,7 @@ function AdminPage({ onBack }) {
             {rsvps.map((rsvp) => (
               <tr key={rsvp.id} className={rsvp.attending ? 'attending' : 'not-attending'}>
                 <td>{rsvp.name}</td>
+                <td>{rsvp.email || '-'}</td>
                 <td>{rsvp.attending ? '✅ Yes' : '❌ No'}</td>
                 <td>{rsvp.attending ? (rsvp.adultCount || rsvp.guestCount || 1) : '-'}</td>
                 <td>{rsvp.attending ? (rsvp.kidCount || 0) : '-'}</td>

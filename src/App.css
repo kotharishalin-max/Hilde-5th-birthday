@@ -296,6 +296,13 @@ section h2 {
   margin-bottom: 16px;
 }
 
+.lookup-status {
+  color: var(--gray-light);
+  font-size: 0.85rem;
+  margin-top: 8px;
+  font-style: italic;
+}
+
 .success-message {
   text-align: center;
   padding: 30px;

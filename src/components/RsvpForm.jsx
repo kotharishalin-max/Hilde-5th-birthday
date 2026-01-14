@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { ref, push, update, get } from 'firebase/database'
+import { ref, push, update, get, query, orderByChild, equalTo } from 'firebase/database'
 import { database } from '../firebase'
 
-const STORAGE_KEY = 'hilde-bday-rsvp-id'
+const STORAGE_KEY = 'hilde-bday-rsvp-email'
 
 function RsvpForm() {
+  const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [attending, setAttending] = useState(null)
   const [adultCount, setAdultCount] = useState(1)
@@ -14,35 +15,61 @@ function RsvpForm() {
   const [existingRsvpId, setExistingRsvpId] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const [lookingUp, setLookingUp] = useState(false)
 
   useEffect(() => {
     const loadExistingRsvp = async () => {
-      const savedId = localStorage.getItem(STORAGE_KEY)
-      if (savedId) {
-        try {
-          const snapshot = await get(ref(database, `rsvps/${savedId}`))
-          if (snapshot.exists()) {
-            const data = snapshot.val()
-            setName(data.name || '')
-            setAttending(data.attending)
-            setAdultCount(data.adultCount || data.guestCount || 1)
-            setKidCount(data.kidCount || 0)
-            setExistingRsvpId(savedId)
-            setSubmitted(true)
-          }
-        } catch (err) {
-          console.error('Error loading RSVP:', err)
-        }
+      const savedEmail = localStorage.getItem(STORAGE_KEY)
+      if (savedEmail) {
+        setEmail(savedEmail)
+        await lookupByEmail(savedEmail)
       }
       setLoading(false)
     }
     loadExistingRsvp()
   }, [])
 
+  const lookupByEmail = async (emailToLookup) => {
+    if (!emailToLookup.trim()) return null
+
+    try {
+      const rsvpsRef = ref(database, 'rsvps')
+      const emailQuery = query(rsvpsRef, orderByChild('email'), equalTo(emailToLookup.toLowerCase().trim()))
+      const snapshot = await get(emailQuery)
+
+      if (snapshot.exists()) {
+        const data = snapshot.val()
+        const [id, rsvp] = Object.entries(data)[0]
+        setName(rsvp.name || '')
+        setAttending(rsvp.attending)
+        setAdultCount(rsvp.adultCount || rsvp.guestCount || 1)
+        setKidCount(rsvp.kidCount || 0)
+        setExistingRsvpId(id)
+        setSubmitted(true)
+        return rsvp
+      }
+    } catch (err) {
+      console.error('Error looking up RSVP:', err)
+    }
+    return null
+  }
+
+  const handleEmailBlur = async () => {
+    if (email.trim() && !existingRsvpId) {
+      setLookingUp(true)
+      await lookupByEmail(email)
+      setLookingUp(false)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
+    if (!email.trim()) {
+      setError('Please enter your email')
+      return
+    }
     if (!name.trim()) {
       setError('Please enter your name')
       return
@@ -53,6 +80,7 @@ function RsvpForm() {
     }
 
     const rsvpData = {
+      email: email.toLowerCase().trim(),
       name: name.trim(),
       attending,
       adultCount: attending ? adultCount : 0,
@@ -61,14 +89,25 @@ function RsvpForm() {
     }
 
     try {
-      if (existingRsvpId) {
-        await update(ref(database, `rsvps/${existingRsvpId}`), rsvpData)
+      // Check for existing RSVP by email if we don't have an ID yet
+      if (!existingRsvpId) {
+        const rsvpsRef = ref(database, 'rsvps')
+        const emailQuery = query(rsvpsRef, orderByChild('email'), equalTo(email.toLowerCase().trim()))
+        const snapshot = await get(emailQuery)
+
+        if (snapshot.exists()) {
+          const [id] = Object.entries(snapshot.val())[0]
+          setExistingRsvpId(id)
+          await update(ref(database, `rsvps/${id}`), rsvpData)
+        } else {
+          const newRef = await push(ref(database, 'rsvps'), rsvpData)
+          setExistingRsvpId(newRef.key)
+        }
       } else {
-        const newRef = await push(ref(database, 'rsvps'), rsvpData)
-        const newId = newRef.key
-        localStorage.setItem(STORAGE_KEY, newId)
-        setExistingRsvpId(newId)
+        await update(ref(database, `rsvps/${existingRsvpId}`), rsvpData)
       }
+
+      localStorage.setItem(STORAGE_KEY, email.toLowerCase().trim())
       setSubmitted(true)
       setIsEditing(false)
     } catch (err) {
@@ -121,6 +160,19 @@ function RsvpForm() {
       </p>
 
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email">Your Email</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onBlur={handleEmailBlur}
+            placeholder="astronaut@email.com"
+          />
+          {lookingUp && <p className="lookup-status">Checking for existing RSVP...</p>}
+        </div>
+
         <div className="form-group">
           <label htmlFor="name">Your Name</label>
           <input
