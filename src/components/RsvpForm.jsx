@@ -3,6 +3,7 @@ import { ref, push, update, get, query, orderByChild, equalTo } from 'firebase/d
 import { database } from '../firebase'
 
 const STORAGE_KEY = 'hilde-bday-rsvp-email'
+const OLD_STORAGE_KEY = 'hilde-bday-rsvp-id' // Legacy key to clean up
 
 function RsvpForm() {
   const [email, setEmail] = useState('')
@@ -19,6 +20,9 @@ function RsvpForm() {
 
   useEffect(() => {
     const loadExistingRsvp = async () => {
+      // Clean up old localStorage key
+      localStorage.removeItem(OLD_STORAGE_KEY)
+
       const savedEmail = localStorage.getItem(STORAGE_KEY)
       if (savedEmail) {
         setEmail(savedEmail)
@@ -121,6 +125,18 @@ function RsvpForm() {
     setSubmitted(false)
   }
 
+  const handleReset = () => {
+    localStorage.removeItem(STORAGE_KEY)
+    setEmail('')
+    setName('')
+    setAttending(null)
+    setAdultCount(1)
+    setKidCount(0)
+    setExistingRsvpId(null)
+    setSubmitted(false)
+    setIsEditing(false)
+  }
+
   if (loading) {
     return (
       <section className="rsvp">
@@ -146,6 +162,9 @@ function RsvpForm() {
           )}
           <button onClick={handleEdit} className="edit-btn">
             Edit RSVP
+          </button>
+          <button onClick={handleReset} className="reset-link">
+            Not you? Start fresh
           </button>
         </div>
       </section>
