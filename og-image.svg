@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a1a"/>
+      <stop offset="50%" stop-color="#12122a"/>
+      <stop offset="100%" stop-color="#0a0a1a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#ff8c42"/>
+    </linearGradient>
+    <linearGradient id="rocketBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e0e0e0"/>
+      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#c0c0c0"/>
+    </linearGradient>
+    <linearGradient id="planet1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b9d"/>
+      <stop offset="100%" stop-color="#c44569"/>
+    </linearGradient>
+    <linearGradient id="planet2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74b9ff"/>
+      <stop offset="100%" stop-color="#0984e3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Stars -->
+  <circle cx="100" cy="80" r="2" fill="white" opacity="0.8"/>
+  <circle cx="250" cy="150" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="400" cy="60" r="2" fill="#ffd700" opacity="0.7"/>
+  <circle cx="550" cy="120" r="1" fill="white" opacity="0.5"/>
+  <circle cx="700" cy="80" r="2" fill="white" opacity="0.8"/>
+  <circle cx="850" cy="140" r="1.5" fill="#ffd700" opacity="0.6"/>
+  <circle cx="1000" cy="90" r="2" fill="white" opacity="0.7"/>
+  <circle cx="1100" cy="160" r="1" fill="white" opacity="0.5"/>
+  <circle cx="150" cy="500" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="300" cy="550" r="2" fill="white" opacity="0.7"/>
+  <circle cx="900" cy="520" r="1.5" fill="#ffd700" opacity="0.6"/>
+  <circle cx="1050" cy="480" r="2" fill="white" opacity="0.8"/>
+
+  <!-- Planet 1 (pink with ring) -->
+  <g transform="translate(950, 150)">
+    <circle cx="0" cy="0" r="60" fill="url(#planet1)"/>
+    <ellipse cx="0" cy="0" rx="90" ry="15" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="4"/>
+  </g>
+
+  <!-- Planet 2 (blue) -->
+  <g transform="translate(180, 480)">
+    <circle cx="0" cy="0" r="45" fill="url(#planet2)"/>
+  </g>
+
+  <!-- Rocket -->
+  <g transform="translate(900, 350) rotate(-15)">
+    <!-- Flame -->
+    <ellipse cx="0" cy="90" rx="15" ry="30" fill="#ff6b35" opacity="0.9"/>
+    <ellipse cx="0" cy="85" rx="10" ry="22" fill="#ffd700"/>
+    <ellipse cx="0" cy="80" rx="5" ry="12" fill="#fff"/>
+    <!-- Rocket body -->
+    <path d="M0 -50 L25 10 L25 60 L15 70 L-15 70 L-25 60 L-25 10 Z" fill="url(#rocketBody)"/>
+    <!-- Rocket tip -->
+    <path d="M0 -50 L18 -10 L-18 -10 Z" fill="#ff6b9d"/>
+    <!-- Window -->
+    <circle cx="0" cy="15" r="14" fill="#74b9ff" stroke="#2d3436" stroke-width="3"/>
+    <circle cx="-4" cy="11" r="5" fill="rgba(255,255,255,0.5)"/>
+    <!-- Fins -->
+    <path d="M-25 45 L-45 80 L-25 65 Z" fill="#ff8c42"/>
+    <path d="M25 45 L45 80 L25 65 Z" fill="#ff8c42"/>
+    <!-- Stripe -->
+    <rect x="-12" y="35" width="24" height="8" fill="#ff6b9d"/>
+  </g>
+
+  <!-- Text -->
+  <text x="600" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" fill="#b8c5d6" letter-spacing="3">YOU'RE INVITED TO</text>
+  <text x="600" y="340" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="72" font-weight="bold" fill="url(#gold)">HILDE'S SPACE</text>
+  <text x="600" y="420" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="72" font-weight="bold" fill="url(#gold)">MISSION!</text>
+
+  <!-- Age badge -->
+  <g transform="translate(600, 530)">
+    <rect x="-120" y="-40" width="240" height="80" rx="40" fill="rgba(255, 215, 0, 0.15)" stroke="#ffd700" stroke-width="2"/>
+    <text x="0" y="15" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="36" fill="#ffd700">5 YEARS OLD!</text>
+  </g>
+</svg>
