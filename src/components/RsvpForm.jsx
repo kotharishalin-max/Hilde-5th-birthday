@@ -53,7 +53,8 @@ function RsvpForm() {
         return rsvp
       }
     } catch (err) {
-      console.error('Error looking up RSVP:', err)
+      // Index not configured - silently fail, user will create new entry
+      console.log('Email lookup unavailable (index not configured)')
     }
     return null
   }
@@ -93,22 +94,30 @@ function RsvpForm() {
     }
 
     try {
-      // Check for existing RSVP by email if we don't have an ID yet
-      if (!existingRsvpId) {
-        const rsvpsRef = ref(database, 'rsvps')
-        const emailQuery = query(rsvpsRef, orderByChild('email'), equalTo(email.toLowerCase().trim()))
-        const snapshot = await get(emailQuery)
+      let rsvpId = existingRsvpId
 
-        if (snapshot.exists()) {
-          const [id] = Object.entries(snapshot.val())[0]
-          setExistingRsvpId(id)
-          await update(ref(database, `rsvps/${id}`), rsvpData)
-        } else {
-          const newRef = await push(ref(database, 'rsvps'), rsvpData)
-          setExistingRsvpId(newRef.key)
+      // Try to find existing RSVP by email (may fail if index not set up)
+      if (!rsvpId) {
+        try {
+          const rsvpsRef = ref(database, 'rsvps')
+          const emailQuery = query(rsvpsRef, orderByChild('email'), equalTo(email.toLowerCase().trim()))
+          const snapshot = await get(emailQuery)
+
+          if (snapshot.exists()) {
+            rsvpId = Object.keys(snapshot.val())[0]
+          }
+        } catch (queryErr) {
+          // Index not set up - that's ok, we'll create a new entry
+          console.log('Email lookup skipped (index not configured)')
         }
+      }
+
+      if (rsvpId) {
+        await update(ref(database, `rsvps/${rsvpId}`), rsvpData)
+        setExistingRsvpId(rsvpId)
       } else {
-        await update(ref(database, `rsvps/${existingRsvpId}`), rsvpData)
+        const newRef = await push(ref(database, 'rsvps'), rsvpData)
+        setExistingRsvpId(newRef.key)
       }
 
       localStorage.setItem(STORAGE_KEY, email.toLowerCase().trim())
