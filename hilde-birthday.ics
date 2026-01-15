@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hilde Birthday//EN
+BEGIN:VEVENT
+DTSTART:20260208T150000Z
+DTEND:20260208T170000Z
+SUMMARY:Hilde's 5th Birthday - Space Mission!
+DESCRIPTION:Hudson River Museum Planetarium\n\n9:30 AM - Doors open\n10:00 AM - Creative activity\n10:30 AM - Planetarium show\n11:00 AM - Cake\n11:45 AM - Mission complete\n\nSee you among the stars!
+LOCATION:Hudson River Museum, 511 Warburton Ave, Yonkers, NY 10701
+END:VEVENT
+END:VCALENDAR
