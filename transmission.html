@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/// INCOMING TRANSMISSION ///</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0a;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    /* Scanline effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* CRT flicker */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 255, 0, 0.02);
+      animation: flicker 0.1s infinite;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 0.97; }
+      50% { opacity: 1; }
+    }
+
+    .terminal {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .header {
+      font-size: clamp(1.2rem, 5vw, 2rem);
+      font-weight: bold;
+      margin-bottom: 40px;
+      animation: blink 1s infinite;
+      text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0.7; }
+    }
+
+    .status {
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+      animation-delay: 0.5s;
+    }
+
+    .destination {
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+      animation-delay: 1s;
+      color: #00cc00;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .progress-container {
+      width: 100%;
+      max-width: 400px;
+      height: 30px;
+      border: 2px solid #00ff00;
+      margin: 0 auto 20px;
+      position: relative;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+      animation-delay: 1.5s;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #004400, #00ff00);
+      animation: fillProgress 2s forwards;
+      animation-delay: 1.5s;
+      box-shadow: 0 0 10px #00ff00 inset;
+    }
+
+    @keyframes fillProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    .progress-text {
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+      animation-delay: 1.5s;
+    }
+
+    .rocket {
+      font-size: 3rem;
+      margin-top: 30px;
+      opacity: 0;
+      animation: rocketLaunch 1s forwards;
+      animation-delay: 3s;
+    }
+
+    @keyframes rocketLaunch {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.5);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="header">/// INCOMING TRANSMISSION ///</div>
+    <div class="status">EXECUTING TRANSMISSION...</div>
+    <div class="destination">TRANSPORTING YOU TO ALL THE PLANETS</div>
+    <div class="progress-container">
+      <div class="progress-bar"></div>
+    </div>
+    <div class="progress-text">ESTABLISHING CONNECTION...</div>
+    <div class="rocket">🚀</div>
+  </div>
+
+  <script>
+    // Redirect after animation completes (3.5 seconds)
+    setTimeout(function() {
+      window.location.href = 'https://www.youtube.com/watch?v=z9jERtmsprI';
+    }, 3500);
+  </script>
+</body>
+</html>
