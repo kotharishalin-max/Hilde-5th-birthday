@@ -78,3 +78,32 @@ export function sanitizeFilename(name) {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
 }
+
+/**
+ * Capture a DOM element and return it as a Blob (for ZIP packaging)
+ * @param {HTMLElement} element - The DOM element to capture
+ * @param {number} scale - Scale factor for high-resolution output (default 3)
+ * @returns {Promise<Blob>} - PNG blob
+ */
+export async function captureElementAsBlob(element, scale = 3) {
+  if (!element) {
+    throw new Error('No element provided for capture')
+  }
+
+  const canvas = await html2canvas(element, {
+    scale: scale,
+    backgroundColor: null,
+    useCORS: true,
+    logging: false,
+  })
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob)
+      } else {
+        reject(new Error('Failed to create blob'))
+      }
+    }, 'image/png')
+  })
+}

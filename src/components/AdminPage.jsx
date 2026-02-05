@@ -1,9 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ref, onValue, remove } from 'firebase/database'
 import { database } from '../firebase'
+import JSZip from 'jszip'
 import BoardingPassFront from './BoardingPassFront'
 import BoardingPassBack from './BoardingPassBack'
-import { downloadElementAsImage, downloadBothSides, sanitizeFilename } from '../downloadBoardingPass'
+import { downloadElementAsImage, downloadBothSides, sanitizeFilename, captureElementAsBlob } from '../downloadBoardingPass'
+
+// Split multi-child names like "Jacques and Luc" into ["Jacques", "Luc"]
+const splitChildNames = (name) => {
+  if (!name || !name.toLowerCase().includes(' and ')) return [name]
+  return name.split(/ and /i).map(n => n.trim())
+}
 
 const ADMIN_CODE = 'HILDE-ADMIN-2026'
 const STORAGE_KEY = 'hilde-bday-admin'
@@ -326,34 +333,53 @@ function AdminPage({ onBack }) {
     setRenderGuest(null)
   }, [])
 
-  // Download all boarding passes (both sides for each guest)
+  // Download all boarding passes as a ZIP (both sides for each guest, auto-splits multi-child families)
   const downloadAllBoardingPasses = useCallback(async () => {
     const attendingGuests = rsvps.filter(r => r.attending)
     if (attendingGuests.length === 0) return
 
+    // Expand multi-child families into individual passes
+    const allPasses = []
+    attendingGuests.forEach(guest => {
+      const name = guest.childName || guest.name
+      splitChildNames(name).forEach(childName => {
+        allPasses.push({ guest, childName })
+      })
+    })
+
+    const zip = new JSZip()
     setDownloadingAll(true)
-    setDownloadProgress({ current: 0, total: attendingGuests.length })
+    setDownloadProgress({ current: 0, total: allPasses.length })
 
-    for (let i = 0; i < attendingGuests.length; i++) {
-      const guest = attendingGuests[i]
-      const guestName = guest.childName || guest.name
-
-      setDownloadProgress({ current: i + 1, total: attendingGuests.length })
-      setRenderGuest(guest)
+    for (let i = 0; i < allPasses.length; i++) {
+      const { guest, childName } = allPasses[i]
+      setDownloadProgress({ current: i + 1, total: allPasses.length })
+      setRenderGuest({ ...guest, displayChildName: childName })
 
       // Wait for render
       await new Promise(resolve => setTimeout(resolve, 150))
 
-      // Download both sides
-      await downloadBothSides(
-        boardingPassFrontRef.current,
-        boardingPassBackRef.current,
-        guestName
-      )
+      // Capture front and back as blobs
+      const frontBlob = await captureElementAsBlob(boardingPassFrontRef.current)
+      const backBlob = await captureElementAsBlob(boardingPassBackRef.current)
 
-      // Delay between guests
-      await new Promise(resolve => setTimeout(resolve, 400))
+      const safeName = sanitizeFilename(childName)
+      zip.file(`${safeName}-front.png`, frontBlob)
+      zip.file(`${safeName}-back.png`, backBlob)
+
+      // Small delay between captures
+      await new Promise(resolve => setTimeout(resolve, 100))
     }
+
+    // Generate and download ZIP
+    const zipBlob = await zip.generateAsync({ type: 'blob' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(zipBlob)
+    link.download = 'boarding-passes.zip'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(link.href)
 
     setDownloadingAll(false)
     setDownloadProgress({ current: 0, total: 0 })
@@ -629,7 +655,7 @@ function AdminPage({ onBack }) {
         <div className="boarding-pass-render-container">
           <BoardingPassFront
             ref={boardingPassFrontRef}
-            name={renderGuest.childName || renderGuest.name}
+            name={renderGuest.displayChildName || renderGuest.childName || renderGuest.name}
           />
           <BoardingPassBack
             ref={boardingPassBackRef}
