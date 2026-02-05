@@ -10,12 +10,12 @@ export const neptuneFacts = [
 ]
 
 export const missionObjectives = [
-  { emoji: "🪐", text: "Learn all 8 planet names" },
-  { emoji: "⭐", text: "Spot 3 constellations" },
-  { emoji: "🚀", text: "Build a rocket from cardboard" },
-  { emoji: "🎨", text: "Draw your own planet" },
-  { emoji: "🌙", text: "Track moon phases for a week" },
-  { emoji: "📚", text: "Read a book about space" }
+  { emoji: "⭐", text: "Find Sirius, the brightest star!" },
+  { emoji: "🐻", text: "Spot the Big Dipper" },
+  { emoji: "🧭", text: "Point to the North Star" },
+  { emoji: "🌍", text: "Watch Earth being born!" },
+  { emoji: "🏛️", text: "Peek at the old mansion" },
+  { emoji: "🌊", text: "Wave at the Hudson River" }
 ]
 
 export const astronautOath = `"I promise to be curious, brave, and kind on all my space adventures!"`

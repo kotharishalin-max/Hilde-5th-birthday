@@ -1,4 +1,5 @@
 import { forwardRef } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import { neptuneFacts, missionObjectives, astronautOath } from '../data/spaceFacts'
 
 // Back side of the Junior Astronaut boarding pass
@@ -66,12 +67,22 @@ const BoardingPassBack = forwardRef(function BoardingPassBack(props, ref) {
       <div className="pass-oath-section">
         <div className="pass-section-title">ASTRONAUT OATH</div>
         <div className="pass-oath-text">{astronautOath}</div>
+        <div className="pass-registration-field">
+          <span className="pass-registration-label">SIGNED:</span>
+          <div className="pass-registration-line" />
+        </div>
       </div>
 
-      {/* Signature line */}
-      <div className="pass-signature-section">
-        <div className="pass-signature-label">Signed:</div>
-        <div className="pass-signature-line" />
+      {/* Secret Mission QR section */}
+      <div className="pass-transmission-section">
+        <QRCodeSVG
+          value="https://kotharishalin-max.github.io/Hilde-5th-birthday/transmission.html"
+          size={40}
+          bgColor="transparent"
+          fgColor="#2D3561"
+          level="M"
+        />
+        <div className="pass-transmission-label">SECRET MISSION</div>
       </div>
     </div>
   )

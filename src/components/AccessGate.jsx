@@ -45,6 +45,10 @@ function AccessGate({ children }) {
     return children
   }
 
+  const handleAdminClick = () => {
+    window.location.href = '?admin=true'
+  }
+
   return (
     <div className="access-gate">
       <div className="stars"></div>
@@ -66,6 +70,10 @@ function AccessGate({ children }) {
           {error && <p className="error">{error}</p>}
           <button type="submit">Launch 🚀</button>
         </form>
+
+        <button className="gate-admin-link" onClick={handleAdminClick}>
+          Mission Control
+        </button>
       </div>
     </div>
   )

@@ -79,15 +79,12 @@ const BoardingPassFront = forwardRef(function BoardingPassFront({ name, crewId }
       <div className="pass-qr-section">
         <div className="pass-qr-container">
           <QRCodeSVG
-            value="https://www.nasa.gov/learning-resources/nasa-kids-club/"
+            value="https://kotharishalin-max.github.io/Hilde-5th-birthday/ar.html"
             size={60}
             bgColor="transparent"
             fgColor="#2D3561"
             level="M"
           />
-        </div>
-        <div className="pass-qr-label">
-          <span className="pass-qr-arrow">→</span> NASA Kids Club
         </div>
       </div>
     </div>
