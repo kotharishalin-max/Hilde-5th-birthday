@@ -53,7 +53,7 @@ const BoardingPassBack = forwardRef(function BoardingPassBack(props, ref) {
 
       {/* Mission objectives section */}
       <div className="pass-objectives-section">
-        <div className="pass-section-title">YOUR MISSION OBJECTIVES</div>
+        <div className="pass-section-title">HUDSON RIVER MUSEUM OBJECTIVES</div>
         <div className="pass-objectives-list">
           {missionObjectives.map((objective, i) => (
             <div key={i} className="pass-objective-item">

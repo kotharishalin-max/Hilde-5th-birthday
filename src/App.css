@@ -4151,7 +4151,7 @@ footer p {
 .pass-back-header {
   position: relative;
   z-index: 1;
-  padding-top: 45px;
+  padding-top: 40px;
   text-align: center;
 }
 
@@ -4176,7 +4176,7 @@ footer p {
   color: #2D3561;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -4191,8 +4191,8 @@ footer p {
   position: relative;
   z-index: 1;
   background: rgba(255, 255, 255, 0.9);
-  margin: 10px 16px;
-  padding: 10px;
+  margin: 8px 16px;
+  padding: 8px;
   border-radius: 12px;
   border-left: 4px solid #4ECDC4;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -4201,11 +4201,11 @@ footer p {
 .pass-facts-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .pass-fact-item {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: #2D3561;
   display: flex;
   align-items: flex-start;
@@ -4223,17 +4223,17 @@ footer p {
   position: relative;
   z-index: 1;
   background: rgba(255, 255, 255, 0.9);
-  margin: 0 16px 8px;
-  padding: 10px;
+  margin: 0 16px 6px;
+  padding: 8px;
   border-radius: 12px;
   border-left: 4px solid #6B4EE6;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pass-objectives-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 8px;
 }
 
 .pass-objective-item {
@@ -4255,8 +4255,8 @@ footer p {
   position: relative;
   z-index: 1;
   background: rgba(255, 255, 255, 0.9);
-  margin: 0 16px 12px;
-  padding: 10px;
+  margin: 0 16px 6px;
+  padding: 8px;
   border-radius: 12px;
   border: 2px dashed #FF6B9D;
   text-align: center;
@@ -4279,7 +4279,7 @@ footer p {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .pass-registration-label {
@@ -4302,8 +4302,8 @@ footer p {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: 8px 16px 12px;
-  padding: 8px 12px;
+  margin: 4px 16px 8px;
+  padding: 6px 10px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   border: 2px solid #FFD700;
